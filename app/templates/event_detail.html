@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}{{ event.name }} — TicketFlow{% endblock %}
+
+{% block content %}
+<div class="page-wrap page-narrow">
+  <a href="{{ url_for('main.index') }}" class="back-link">← Back to events</a>
+
+  <div class="detail-card">
+    <div class="detail-header">
+      <div class="detail-icon event-{{ event.category }}">{{ event.icon }}</div>
+      <div>
+        <h1 class="detail-title">{{ event.name }}</h1>
+        <p class="detail-meta">📅 {{ event.date }} &nbsp; 📍 {{ event.venue }}</p>
+        <p class="detail-meta">🏷️ {{ event.category | capitalize }}</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <p class="detail-desc">{{ event.description }}</p>
+
+    <div class="detail-stats">
+      <div class="stat-pill">
+        <span class="stat-label">Price</span>
+        <span class="stat-value">₹{{ "{:,}".format(event.price) }}</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-label">Seats left</span>
+        <span class="stat-value {% if not event.available %}text-danger{% endif %}">
+          {% if event.available %}{{ event.seats_left }}{% else %}Sold out{% endif %}
+        </span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-label">Total seats</span>
+        <span class="stat-value">{{ event.total_seats }}</span>
+      </div>
+    </div>
+
+    {% if event.available %}
+      {% if session.get('user_id') %}
+        <a href="{{ url_for('booking.new', event_id=event.id) }}" class="btn-primary btn-block">Book tickets</a>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}" class="btn-primary btn-block">Log in to book</a>
+      {% endif %}
+    {% else %}
+      <button class="btn-primary btn-block" disabled>Sold out</button>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
