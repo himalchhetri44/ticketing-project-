@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Book — {{ event.name }}{% endblock %}
+
+{% block content %}
+<div class="page-wrap page-narrow">
+  <a href="{{ url_for('event.detail', event_id=event.id) }}" class="back-link">← Back to event</a>
+
+  <div class="booking-card">
+    <div class="booking-event-header">
+      <div class="detail-icon event-{{ event.category }}">{{ event.icon }}</div>
+      <div>
+        <h2 class="booking-event-name">{{ event.name }}</h2>
+        <p class="booking-event-meta">{{ event.date }} · {{ event.venue }}</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <form method="POST" action="{{ url_for('booking.new', event_id=event.id) }}" id="bookingForm">
+      <div class="field-row">
+        <div class="field">
+          <label for="ticket_type">Ticket type</label>
+          <select id="ticket_type" name="ticket_type">
+            <option>General Admission</option>
+            <option>VIP</option>
+            <option>Student</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="seat_pref">Seat preference</label>
+          <select id="seat_pref" name="seat_pref">
+            <option>No preference</option>
+            <option>Front row</option>
+            <option>Middle</option>
+            <option>Back</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Number of tickets</label>
+        <div class="qty-row">
+          <button type="button" class="qty-btn" onclick="changeQty(-1)">−</button>
+          <span class="qty-num" id="qtyDisplay">1</span>
+          <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+          <input type="hidden" name="quantity" id="qtyInput" value="1">
+        </div>
+      </div>
+
+      <div class="summary-box" id="summaryBox">
+        <div class="summary-row"><span>Ticket price</span><span>₹{{ "{:,}".format(event.price) }}</span></div>
+        <div class="summary-row"><span>Quantity</span><span id="sumQty">× 1</span></div>
+        <div class="summary-row"><span>Service fee (5%)</span><span id="sumFee">₹{{ event.price // 20 }}</span></div>
+        <div class="summary-row summary-total"><span>Total</span><span id="sumTotal">₹{{ "{:,}".format(event.price + event.price // 20) }}</span></div>
+      </div>
+
+      <button type="submit" class="btn-primary btn-block">✔ Confirm booking</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  const price = {{ event.price }};
+  let qty = 1;
+
+  function changeQty(d) {
+    qty = Math.max(1, Math.min({{ event.seats_left }}, qty + d));
+    document.getElementById('qtyDisplay').textContent = qty;
+    document.getElementById('qtyInput').value = qty;
+    const fee = Math.round(price * 0.05 * qty);
+    const total = price * qty + fee;
+    document.getElementById('sumQty').textContent = '× ' + qty;
+    document.getElementById('sumFee').textContent = '₹' + fee.toLocaleString('en-IN');
+    document.getElementById('sumTotal').textContent = '₹' + total.toLocaleString('en-IN');
+  }
+</script>
+{% endblock %}
