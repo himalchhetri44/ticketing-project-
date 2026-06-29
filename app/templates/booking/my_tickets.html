@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}My Tickets — TicketFlow{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+  <div class="section-label">My tickets</div>
+
+  {% if tickets %}
+    <div class="tickets-list">
+      {% for booking in tickets %}
+        <a href="{{ url_for('booking.confirm', ticket_id=booking.ticket_id) }}" class="ticket-row-item">
+          <div class="ticket-row-icon event-{{ booking.event.category }}">{{ booking.event.icon }}</div>
+          <div class="ticket-row-info">
+            <div class="ticket-row-name">{{ booking.event.name }}</div>
+            <div class="ticket-row-meta">{{ booking.event.date }} · {{ booking.quantity }} ticket{% if booking.quantity > 1 %}s{% endif %} · {{ booking.ticket_type }}</div>
+          </div>
+          <div class="ticket-row-right">
+            <span class="badge">{{ booking.status | capitalize }}</span>
+            <div class="ticket-row-id">{{ booking.ticket_id }}</div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">🎟️</div>
+      <p>You haven't booked any tickets yet.</p>
+      <a href="{{ url_for('main.index') }}" class="btn-primary">Browse events</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
