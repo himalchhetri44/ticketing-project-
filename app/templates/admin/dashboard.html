@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard — TicketFlow{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+  <div class="section-label">Admin dashboard</div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Tickets sold</div>
+      <div class="stat-value">{{ stats.total_sold }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Revenue</div>
+      <div class="stat-value">₹{{ "{:,}".format(stats.total_revenue) }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Events</div>
+      <div class="stat-value">{{ stats.total_events }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Users</div>
+      <div class="stat-value">{{ stats.total_users }}</div>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:2rem;">All bookings</div>
+
+  {% if bookings %}
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Ticket ID</th>
+            <th>User</th>
+            <th>Event</th>
+            <th>Qty</th>
+            <th>Type</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Scanned</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for b in bookings %}
+            <tr>
+              <td class="mono">{{ b.ticket_id }}</td>
+              <td>{{ b.user.name }}</td>
+              <td>{{ b.event.name }}</td>
+              <td>{{ b.quantity }}</td>
+              <td>{{ b.ticket_type }}</td>
+              <td>₹{{ "{:,}".format(b.total_amount) }}</td>
+              <td><span class="badge">{{ b.status }}</span></td>
+              <td>{% if b.scanned %}✅{% else %}—{% endif %}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <p>No bookings yet.</p>
+    </div>
+  {% endif %}
+
+  <div class="section-label" style="margin-top:2rem;">Events overview</div>
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Event</th>
+          <th>Category</th>
+          <th>Date</th>
+          <th>Price</th>
+          <th>Booked</th>
+          <th>Remaining</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in events %}
+          <tr>
+            <td>{{ e.icon }} {{ e.name }}</td>
+            <td>{{ e.category | capitalize }}</td>
+            <td>{{ e.date }}</td>
+            <td>₹{{ "{:,}".format(e.price) }}</td>
+            <td>{{ e.booked_seats }} / {{ e.total_seats }}</td>
+            <td>{% if e.available %}<span class="badge">{{ e.seats_left }}</span>{% else %}<span class="badge badge-sold">Sold out</span>{% endif %}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
