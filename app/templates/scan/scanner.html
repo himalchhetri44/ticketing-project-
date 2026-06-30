@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Scan Ticket — TicketFlow{% endblock %}
+
+{% block content %}
+<div class="page-wrap page-narrow">
+  <div class="section-label">Ticket scanner</div>
+
+  <div class="scan-card">
+    <div class="scan-icon">📷</div>
+    <h2 class="scan-title">Scan or enter ticket ID</h2>
+    <p class="scan-sub">Enter the ticket ID from the QR code to validate entry.</p>
+
+    <form method="POST" action="{{ url_for('scan.scanner') }}">
+      <div class="field">
+        <label for="ticket_id">Ticket ID</label>
+        <input type="text" id="ticket_id" name="ticket_id" placeholder="e.g. TKT-123456"
+               style="text-transform:uppercase; font-family: monospace; letter-spacing: 0.05em;"
+               autofocus>
+      </div>
+      <button type="submit" class="btn-primary btn-block">Verify ticket</button>
+    </form>
+
+    {% if result %}
+      <div class="scan-result scan-{{ 'ok' if result.success else 'fail' }}">
+        <div class="scan-result-icon">{{ '✅' if result.success else '❌' }}</div>
+        <div class="scan-result-msg">{{ result.message }}</div>
+        {% if booking %}
+          <div class="scan-booking-detail">
+            <div class="ticket-row"><span>Event</span><span>{{ booking.event.name }}</span></div>
+            <div class="ticket-row"><span>Holder</span><span>{{ booking.user.name }}</span></div>
+            <div class="ticket-row"><span>Tickets</span><span>{{ booking.quantity }}</span></div>
+            <div class="ticket-row"><span>Type</span><span>{{ booking.ticket_type }}</span></div>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
