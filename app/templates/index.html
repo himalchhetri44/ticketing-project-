@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}TicketFlow — Browse Events{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+
+  <div class="hero">
+    <div class="hero-eyebrow">🎪 Live events near you</div>
+    <h1 class="hero-title">Find your next <span>unforgettable</span><br>experience</h1>
+    <p class="hero-sub">Concerts, sports, arts, food festivals and more — book instantly, no hassle.</p>
+    <form class="search-row" method="GET" action="{{ url_for('main.index') }}">
+      <input type="text" name="q" value="{{ query }}" placeholder="Search events or venues…">
+      <select name="cat">
+        <option value="" {% if not category %}selected{% endif %}>All categories</option>
+        <option value="music" {% if category == 'music' %}selected{% endif %}>🎵 Music</option>
+        <option value="sport" {% if category == 'sport' %}selected{% endif %}>🏏 Sports</option>
+        <option value="art"   {% if category == 'art'   %}selected{% endif %}>🎨 Arts</option>
+        <option value="food"  {% if category == 'food'  %}selected{% endif %}>🍜 Food</option>
+      </select>
+      <button type="submit" class="btn-primary">🔍 Search</button>
+    </form>
+  </div>
+
+  <div class="section-label">
+    {% if query or category %}Results for "{{ query or category }}"{% else %}Upcoming events{% endif %}
+  </div>
+
+  {% if events %}
+    <div class="events-grid">
+      {% for event in events %}
+        <a href="{{ url_for('event.detail', event_id=event.id) }}" class="event-card">
+          <div class="event-thumb event-{{ event.category }}">{{ event.icon }}</div>
+          <div class="event-body">
+            <div class="event-name">{{ event.name }}</div>
+            <div class="event-meta">📅 {{ event.date }}<br>📍 {{ event.venue }}</div>
+            <div class="event-footer">
+              <span class="event-price">₹{{ "{:,}".format(event.price) }}</span>
+              <span class="badge {% if not event.available %}badge-sold{% endif %}">
+                {% if event.available %}{{ event.seats_left }} left{% else %}Sold out{% endif %}
+              </span>
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <p>No events found for your search.</p>
+      <a href="{{ url_for('main.index') }}" class="btn-secondary">Clear filters</a>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}
