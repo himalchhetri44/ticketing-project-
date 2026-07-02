@@ -11,8 +11,9 @@ SERVICE_FEE_RATE = 0.05
 
 
 def calculate_total(price, quantity):
-    fee = round(price * SERVICE_FEE_RATE * quantity)
-    total = price * quantity + fee
+    subtotal = price * quantity
+    fee = round(subtotal * SERVICE_FEE_RATE, 2)
+    total = subtotal + fee
     return fee, total
 
 
