@@ -48,6 +48,9 @@ def generate_ticket_id():
     suffix = ''.join(random.choices(string.digits, k=6))
     return f'TKT-{suffix}'
 
+def has_available_seats(event, quantity):
+    return event.available and quantity <= event.seats_left
+
 def create_booking(user_id, event_id, ticket_type, seat_pref, quantity, total):
     ticket_id = generate_ticket_id()
     booking = Booking(
